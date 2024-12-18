@@ -30,7 +30,7 @@
         }
 
         th, td {
-            padding: 15px;
+            padding: 10px; /* 减少内边距以适配屏幕 */
             text-align: center;
             vertical-align: middle;
             border: 1px solid #ddd;
@@ -41,15 +41,15 @@
         th {
             background-color: #0078d7;
             color: white;
-            font-size: 1.5em;
+            font-size: 0.8em;
         }
 
         th:first-child, td:first-child {
-            width: 180px; /* 第一列的独立宽度 */
+            width: 12%; /* 第一列的相对宽度 */
         }
 
         td:not(:first-child), th:not(:first-child) {
-            width: 380px; /* 其他列的固定宽度 */
+            width: 12.2%; /* 其他列的相对宽度 */
         }
 
         td:first-child {
@@ -67,17 +67,18 @@
 
         audio {
             display: block;
-            width: 380px; /* 固定宽度 */
+            width: 100%; /* 音频控件宽度适配单元格 */
             height: 20px; /* 固定高度 */
             border: 1px solid #ccc;
             border-radius: 6px;
-            margin: 8px auto; /* 居中 */
+            margin: 2px auto; /* 居中 */
         }
 
         .spectrogram {
             display: block;
-            width: 380px; /* 固定宽度 */
-            height: 285px; /* 固定高度 */
+            width: 100%; /* 图片宽度适配单元格 */
+            height: auto; /* 自动高度 */
+            max-height: 285px; /* 限制最大高度 */
             object-fit: contain;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -86,6 +87,29 @@
 
         tr:hover td {
             background-color: #f0f4ff;
+        }
+
+        /* 媒体查询：屏幕宽度小于 768px 时 */
+        @media screen and (max-width: 768px) {
+            table {
+                width: 100%; /* 表格全宽显示 */
+            }
+
+            th, td {
+                padding: 8px; /* 减少单元格内边距 */
+            }
+
+            th:first-child, td:first-child {
+                width: 20%; /* 第一列调整宽度 */
+            }
+
+            td:not(:first-child), th:not(:first-child) {
+                width: 15%; /* 其他列宽度调整 */
+            }
+
+            .spectrogram {
+                max-height: 200px; /* 限制图片高度 */
+            }
         }
     </style>
 </head>
@@ -115,7 +139,7 @@
             spec: 'demo/spec/'
         };
 
-        const versions = ['Noisy', 'ConvTasNet', 'DCCRN', 'Demucs', 'FullSubNet', 'DASANet', 'Clean'];
+        const versions = ['noisy', 'convtasNet', 'dccrn', 'demucs', 'fullsubnet', 'DASANet', 'clean'];
         const audioFiles = [
             'Motorboat_27_36_-5.wav',
             'Musselboat_48_79_-6.wav',
