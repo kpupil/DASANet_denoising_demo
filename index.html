@@ -3,107 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Comparison Viewer</title>
+    <title>Shipsear Denoising Samples</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f7f8fc;
+            color: #333;
         }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .audio-version {
-            margin: 20px 0;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            width: 80%;
+
+        h1 {
+            color: #333;
+            font-size: 2em;
             text-align: center;
+            margin: 20px 0;
         }
-        .audio-version h3 {
-            margin-bottom: 10px;
+
+        table {
+            width: 95%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            table-layout: fixed; /* 固定表格布局 */
         }
-        .audio-version img {
-            max-width: 100%;
-            height: auto;
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        th {
+            background-color: #0078d7;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        th:first-child, td:first-child {
+            width: 180px; /* 第一列的独立宽度 */
+        }
+
+        td:not(:first-child), th:not(:first-child) {
+            width: 380px; /* 其他列的固定宽度 */
+        }
+
+        td:first-child {
+            font-weight: bold;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: 8px 0 0 8px;
+        }
+
+        td:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        audio {
+            display: block;
+            width: 380px; /* 固定宽度 */
+            height: 20px; /* 固定高度 */
             border: 1px solid #ccc;
-            margin-top: 10px;
+            border-radius: 6px;
+            margin: 8px auto; /* 居中 */
         }
-        .highlight {
-            background-color: #f0f8ff;
-            border: 2px solid #0078d7;
+
+        .spectrogram {
+            display: block;
+            width: 380px; /* 固定宽度 */
+            height: 285px; /* 固定高度 */
+            object-fit: contain;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 0 auto; /* 居中 */
+        }
+
+        tr:hover td {
+            background-color: #f0f4ff;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Audio Comparison Viewer</h1>
-
-        <label for="audioSelect">Choose an audio file:</label>
-        <select id="audioSelect">
-            <!-- Options will be dynamically populated -->
-        </select>
-
-        <div id="comparisonContainer">
-            <!-- Audio versions will be dynamically populated -->
-        </div>
-    </div>
+    <h1>Shipsear Denoising Samples</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Audio Files</th>
+                <th>Noisy</th>
+                <th>Conv-TasNet</th>
+                <th>DCCRN</th>
+                <th>Demucs</th>
+                <th>FullSubNet</th>
+                <th>DASANet(Ours)</th>
+                <th>Clean</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- 动态生成内容 -->
+        </tbody>
+    </table>
 
     <script>
-        // Example data, replace with dynamic fetching in production
         const basePaths = {
-            audio: 'audio/',
-            spec: 'spec/'
+            audio: 'demo/audio/',
+            spec: 'demo/spec/'
         };
 
-        const versions = ['clean', 'noisy', 'convtasnet', 'DASANet', 'dccrn', 'demucs', 'fullsubnet'];
+        const versions = ['Noisy', 'ConvTasNet', 'DCCRN', 'Demucs', 'FullSubNet', 'DASANet', 'Clean'];
         const audioFiles = [
             'Motorboat_27_36_-5.wav',
             'Musselboat_48_79_-6.wav',
-            'Passengers_13_10_-6.wav'
+            'Passengers_13_10_-6.wav',
+            'Passengers_35_53_-5.wav',
+            'Passengers_53_75_-5.wav',
         ];
 
-        const audioSelect = document.getElementById('audioSelect');
-        const comparisonContainer = document.getElementById('comparisonContainer');
+        const tableBody = document.getElementById('tableBody');
 
-        // Populate the dropdown menu
         audioFiles.forEach(file => {
-            const option = document.createElement('option');
-            option.value = file;
-            option.textContent = file;
-            audioSelect.appendChild(option);
-        });
+            const row = document.createElement('tr');
 
-        // Update comparison view on selection
-        audioSelect.addEventListener('change', () => {
-            const selectedFile = audioSelect.value;
-            comparisonContainer.innerHTML = '';
+            // 第一列：文件名
+            const fileNameCell = document.createElement('td');
+            fileNameCell.textContent = file;
+            row.appendChild(fileNameCell);
 
+            // 其他列：音频按钮和谱图
             versions.forEach(version => {
-                const versionDiv = document.createElement('div');
-                versionDiv.className = 'audio-version';
-
-                if (version === 'DASANet') {
-                    versionDiv.classList.add('highlight');
-                }
-
-                versionDiv.innerHTML = `
-                    <h3>${version}</h3>
+                const cell = document.createElement('td');
+                cell.innerHTML = `
                     <audio controls>
-                        <source src="${basePaths.audio}${version}/${selectedFile}" type="audio/wav">
+                        <source src="${basePaths.audio}${version}/${file}" type="audio/wav">
                         Your browser does not support the audio element.
                     </audio>
-                    <img src="${basePaths.spec}${version}/${selectedFile.replace('.wav', '.png')}" alt="Spectrogram of ${version}">
+                    <img src="${basePaths.spec}${version}/${file.replace('.wav', '.png')}" alt="Spectrogram" class="spectrogram">
                 `;
-
-                comparisonContainer.appendChild(versionDiv);
+                row.appendChild(cell);
             });
-        });
 
-        // Initialize with the first file
-        audioSelect.dispatchEvent(new Event('change'));
+            tableBody.appendChild(row);
+        });
     </script>
 </body>
 </html>
