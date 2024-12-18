@@ -151,21 +151,21 @@
 
         const versions = ['clean', 'noisy', 'convtasNet', 'dccrn', 'demucs', 'fullsubnet', 'DASANet'];
         const audioFiles = [
-            'Motorboat_27_-5(dB).wav',
-            'Musselboat_48_-6(dB).wav',
-            'Passengers_13_-6(dB).wav',
-            'Passengers_35_-5(dB).wav',
-            'Passengers_53_-5(dB).wav',
+            { name: 'Motorboat_27 (-5dB)', file: 'Motorboat_27_36_-5.wav' },
+            { name: 'Musselboat_48 (-6dB)', file: 'Musselboat_48_79_-6.wav' },
+            { name: 'Passengers_13 (-6dB)', file: 'Passengers_13_10_-6.wav' },
+            { name: 'Passengers_35 (-5dB)', file: 'Passengers_35_53_-5.wav' },
+            { name: 'Passengers_53 (-5dB)', file: 'Passengers_53_75_-5.wav' },
         ];
 
         const tableBody = document.getElementById('tableBody');
 
-        audioFiles.forEach(file => {
+        audioFiles.forEach(({ name, file }) => {
             const row = document.createElement('tr');
 
             // First column: File name
             const fileNameCell = document.createElement('td');
-            fileNameCell.textContent = file;
+            fileNameCell.textContent = name;
             row.appendChild(fileNameCell);
 
             // Other columns: Audio controls and spectrograms
