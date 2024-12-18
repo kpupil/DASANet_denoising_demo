@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Comparison Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .audio-version {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+        }
+        .audio-version h3 {
+            margin-bottom: 10px;
+        }
+        .audio-version img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+        .highlight {
+            background-color: #f0f8ff;
+            border: 2px solid #0078d7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Comparison Viewer</h1>
+
+        <label for="audioSelect">Choose an audio file:</label>
+        <select id="audioSelect">
+            <!-- Options will be dynamically populated -->
+        </select>
+
+        <div id="comparisonContainer">
+            <!-- Audio versions will be dynamically populated -->
+        </div>
+    </div>
+
+    <script>
+        // Example data, replace with dynamic fetching in production
+        const basePaths = {
+            audio: 'audio/',
+            spec: 'spec/'
+        };
+
+        const versions = ['clean', 'noisy', 'convtasnet', 'DASANet', 'dccrn', 'demucs', 'fullsubnet'];
+        const audioFiles = [
+            'Motorboat_27_36_-5.wav',
+            'Musselboat_48_79_-6.wav',
+            'Passengers_13_10_-6.wav'
+        ];
+
+        const audioSelect = document.getElementById('audioSelect');
+        const comparisonContainer = document.getElementById('comparisonContainer');
+
+        // Populate the dropdown menu
+        audioFiles.forEach(file => {
+            const option = document.createElement('option');
+            option.value = file;
+            option.textContent = file;
+            audioSelect.appendChild(option);
+        });
+
+        // Update comparison view on selection
+        audioSelect.addEventListener('change', () => {
+            const selectedFile = audioSelect.value;
+            comparisonContainer.innerHTML = '';
+
+            versions.forEach(version => {
+                const versionDiv = document.createElement('div');
+                versionDiv.className = 'audio-version';
+
+                if (version === 'DASANet') {
+                    versionDiv.classList.add('highlight');
+                }
+
+                versionDiv.innerHTML = `
+                    <h3>${version}</h3>
+                    <audio controls>
+                        <source src="${basePaths.audio}${version}/${selectedFile}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <img src="${basePaths.spec}${version}/${selectedFile.replace('.wav', '.png')}" alt="Spectrogram of ${version}">
+                `;
+
+                comparisonContainer.appendChild(versionDiv);
+            });
+        });
+
+        // Initialize with the first file
+        audioSelect.dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
