@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipsear Denoising Samples</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f7f8fc;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2em;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 95%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        th {
+            background-color: #0078d7;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        th.dasanet {
+            background-color: #ff9800; /* 强调 DASANet 列 */
+            color: white;
+            font-weight: bold;
+        }
+
+        td.dasanet {
+            background-color: #fff7e6; /* DASANet 列单元格强调背景色 */
+            font-weight: bold;
+        }
+
+        th:first-child, td:first-child {
+            width: 12%;
+        }
+
+        td:not(:first-child), th:not(:first-child) {
+            width: 12.2%;
+        }
+
+        td:first-child {
+            font-weight: bold;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: 8px 0 0 8px;
+        }
+
+        td:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        audio {
+            display: block;
+            width: 100%;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin: 2px auto;
+        }
+
+        .spectrogram {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 285px;
+            object-fit: contain;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+
+        tr:hover td {
+            background-color: #f0f4ff;
+        }
+
+        @media screen and (max-width: 768px) {
+            table {
+                width: 100%;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            th:first-child, td:first-child {
+                width: 20%;
+            }
+
+            td:not(:first-child), th:not(:first-child) {
+                width: 15%;
+            }
+
+            .spectrogram {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Shipsear Denoising Samples</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Audio Files</th>
+                <th>Clean</th>
+                <th>Noisy</th>
+                <th>Conv-TasNet</th>
+                <th>DCCRN</th>
+                <th>Demucs</th>
+                <th>FullSubNet</th>
+                <th class="dasanet">DASANet (Ours)</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Dynamically generated content -->
+        </tbody>
+    </table>
+
+    <script>
+        const basePaths = {
+            audio: 'audio/',
+            spec: 'spec/'
+        };
+
+        const versions = ['clean', 'noisy', 'convtasnet', 'dccrn', 'demucs', 'fullsubnet', 'DASANet'];
+        const audioFiles = [
+            { name: 'Motorboat_27_36 (-5dB)', file: 'Motorboat_27_36_-5.wav' },
+            { name: 'Musselboat_48_79 (-6dB)', file: 'Musselboat_48_79_-6.wav' },
+            { name: 'Passengers_53_75_ (-5dB)', file: 'Passengers_53_75_-5.wav' },
+            { name: 'Passengers_13_10 (-6dB)', file: 'Passengers_13_10_-6.wav' },
+            { name: 'Passengers_35_53_ (-7dB)', file: 'Passengers_35_53_-7.wav' },
+            { name: 'Passengers_13_39 (-8dB)', file: 'Passengers_13_39_-8.wav' },
+            { name: 'Passengers_35_60 (-9dB)', file: 'Passengers_35_60_-9.wav' },
+            { name: 'Passengers_13_4 (-10dB)', file: 'Passengers_13_4_-10.wav' },
+        ];
+
+        const tableBody = document.getElementById('tableBody');
+
+        audioFiles.forEach(({ name, file }) => {
+            const row = document.createElement('tr');
+
+            // First column: File name
+            const fileNameCell = document.createElement('td');
+            fileNameCell.textContent = name;
+            row.appendChild(fileNameCell);
+
+            // Other columns: Audio controls and spectrograms
+            versions.forEach(version => {
+                const cell = document.createElement('td');
+                cell.innerHTML = `
+                    <audio controls>
+                        <source src="${basePaths.audio}${version}/${file}" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <img src="${basePaths.spec}${version}/${file.replace('.wav', '.png')}" alt="Spectrogram" class="spectrogram">
+                `;
+
+                // Highlight DASANet column
+                if (version === 'DASANet') {
+                    cell.classList.add('dasanet');
+                }
+
+                row.appendChild(cell);
+            });
+
+            tableBody.appendChild(row);
+        });
+    </script>
+</body>
+</html>
